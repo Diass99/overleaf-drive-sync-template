@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+
+# Credenciais
+.env
+.env.*
+*.token
+credentials.*
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Temporários
+CRIAR_PROJETO_OVERLEAF.zip
+
+# Sistema e editores
+.DS_Store
+Thumbs.db
+*.swp
+*~
