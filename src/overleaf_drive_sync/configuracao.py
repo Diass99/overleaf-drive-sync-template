@@ -51,7 +51,7 @@ class ConfiguracaoProjeto:
 def validar_caminho_relativo(valor: str, campo: str) -> Path:
     caminho = Path(valor)
 
-    if caminho.is_absolute():
+    if caminho.is_absolute() or caminho.anchor:
         raise ValueError(f"{campo} deve ser um caminho relativo.")
 
     if not caminho.parts:

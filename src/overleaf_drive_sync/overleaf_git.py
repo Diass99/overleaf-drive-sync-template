@@ -75,7 +75,11 @@ def resolver_dentro(
     raiz = raiz.expanduser().resolve()
     caminho = Path(relativo)
 
-    if caminho.is_absolute() or ".." in caminho.parts:
+    if (
+        caminho.is_absolute()
+        or caminho.anchor
+        or ".." in caminho.parts
+    ):
         raise ValueError(
             f"{descricao} deve ser relativo e não pode conter '..'."
         )

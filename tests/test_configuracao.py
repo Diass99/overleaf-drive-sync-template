@@ -43,6 +43,13 @@ class TestConfiguracao(unittest.TestCase):
                 "pasta_outputs",
             )
 
+    @unittest.skipUnless(os.name == "nt", "semântica de caminhos do Windows")
+    def test_rejeita_caminho_com_unidade_ou_raiz_no_windows(self):
+        for valor in ("C:\\dados\\outputs", "\\dados\\outputs", "C:dados"):
+            with self.subTest(valor=valor):
+                with self.assertRaises(ValueError):
+                    validar_caminho_relativo(valor, "pasta_outputs")
+
     def test_rejeita_subida_de_diretorio(self):
         with self.assertRaises(ValueError):
             validar_caminho_relativo(
