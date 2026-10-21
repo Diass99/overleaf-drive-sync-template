@@ -134,6 +134,8 @@ O executável procura o token automaticamente em `google.colab.userdata`.
 - o clone Git é sempre temporário;
 - `.git` nunca é mantido no Google Drive;
 - somente `[publicacao].origem` é enviado ao Overleaf;
+- metadados do sistema (`desktop.ini`, `Thumbs.db`, `.DS_Store`) são
+  ignorados em qualquer nível;
 - o token é entregue ao Git por `GIT_ASKPASS` temporário.
 
 ## Estrutura gerada
@@ -158,10 +160,20 @@ exclusiva dos outputs, Git remoto descartável e geração de projetos.
 
 ## Estado
 
-Versão atual: `0.1.0-alpha`.
+Versão atual: `0.1.1-alpha`.
 
-O fluxo completo foi validado em Linux, Google Drive montado por Rclone e um
-projeto real do Overleaf.
+O fluxo completo foi validado em Linux, com Google Drive montado por Rclone,
+e em Windows, com Google Drive para Desktop, em projetos reais do Overleaf.
+
+No Windows, a raiz do Drive (`G:\Meu Drive`) não é detectada
+automaticamente; defina-a na sessão antes de executar:
+
+    $env:GOOGLE_DRIVE_ROOT = "G:\Meu Drive"
+
+Para que o token seja solicitado pela própria rotina, e não por uma janela
+do Git Credential Manager, defina também:
+
+    $env:GCM_INTERACTIVE = "never"
 
 ## Licença
 

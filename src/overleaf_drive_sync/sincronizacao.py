@@ -6,6 +6,23 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 
+# Metadados criados pelo sistema operacional ou pelo cliente do Drive
+# (desktop.ini: Google Drive para Desktop e Explorer no Windows).
+# Nunca fazem parte do projeto e são ignorados em qualquer nível.
+ARQUIVOS_DE_SISTEMA = frozenset(
+    {
+        "desktop.ini",
+        "thumbs.db",
+        "ehthumbs.db",
+        ".ds_store",
+    }
+)
+
+
+def e_arquivo_de_sistema(caminho: Path) -> bool:
+    return caminho.name.lower() in ARQUIVOS_DE_SISTEMA
+
+
 @dataclass
 class ResultadoCopia:
     novos: int = 0
@@ -101,6 +118,9 @@ def copiar_arvore_integral(
         relativo = item.relative_to(origem)
 
         if relativo.parts and relativo.parts[0] in excluir:
+            continue
+
+        if e_arquivo_de_sistema(item) and not item.is_dir():
             continue
 
         alvo = destino / relativo

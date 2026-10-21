@@ -145,6 +145,41 @@ class TestSincronizacao(unittest.TestCase):
             self.assertFalse((destino / ".pipeline").exists())
             self.assertFalse((destino / "README.md").exists())
 
+    def test_ignora_metadados_do_sistema(self):
+        temporario, origem, destino = self.criar_arvores()
+
+        with temporario:
+            (origem / "figuras").mkdir()
+            (origem / "figuras" / "figura.png").write_bytes(b"png")
+            (origem / "desktop.ini").write_text(
+                "[.ShellClassInfo]",
+                encoding="utf-8",
+            )
+            (origem / "figuras" / "Desktop.ini").write_text(
+                "[.ShellClassInfo]",
+                encoding="utf-8",
+            )
+            (origem / "figuras" / "Thumbs.db").write_bytes(b"db")
+            (origem / ".DS_Store").write_bytes(b"ds")
+
+            resultado = copiar_arvore_integral(
+                origem,
+                destino,
+            )
+
+            self.assertEqual(resultado.novos, 1)
+            self.assertTrue(
+                (destino / "figuras" / "figura.png").is_file()
+            )
+            self.assertFalse((destino / "desktop.ini").exists())
+            self.assertFalse(
+                (destino / "figuras" / "Desktop.ini").exists()
+            )
+            self.assertFalse(
+                (destino / "figuras" / "Thumbs.db").exists()
+            )
+            self.assertFalse((destino / ".DS_Store").exists())
+
     def test_rejeita_destino_dentro_da_origem(self):
         with tempfile.TemporaryDirectory() as temporario:
             origem = Path(temporario) / "origem"
