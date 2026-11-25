@@ -185,5 +185,31 @@ class TestOverleafGit(unittest.TestCase):
             )
 
 
+    def test_outputs_vazios_nao_falham_nem_geram_commit(self):
+        for simular in (True, False):
+            with self.subTest(simular=simular):
+                with tempfile.TemporaryDirectory() as temporario:
+                    raiz = Path(temporario)
+                    remoto = self.preparar_remoto(raiz)
+                    projeto = raiz / "projeto"
+                    outputs = raiz / "outputs"
+
+                    projeto.mkdir()
+                    outputs.mkdir()
+
+                    resultado = executar_fluxo_completo(
+                        raiz_projeto=projeto,
+                        origem_outputs=outputs,
+                        configuracao=configuracao_teste(),
+                        token=None,
+                        simular=simular,
+                        repo_url=str(remoto),
+                    )
+
+                    self.assertFalse(resultado.houve_alteracoes_git)
+                    self.assertFalse(resultado.commit_realizado)
+                    self.assertFalse(resultado.push_realizado)
+
+
 if __name__ == "__main__":
     unittest.main()

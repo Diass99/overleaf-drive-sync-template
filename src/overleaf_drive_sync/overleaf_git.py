@@ -275,10 +275,14 @@ def executar_fluxo_completo(
             "publicacao.origem no clone",
         )
 
-        publicacao = copiar_arvore_integral(
-            fonte_publicacao,
-            destino_clone,
-        )
+        # Pasta de outputs ainda vazia: não há árvore de publicação.
+        if fonte_publicacao.is_dir():
+            publicacao = copiar_arvore_integral(
+                fonte_publicacao,
+                destino_clone,
+            )
+        else:
+            publicacao = ResultadoCopia()
         imprimir_operacoes(
             "Pasta raiz → clone do Overleaf",
             publicacao,
@@ -303,16 +307,18 @@ def executar_fluxo_completo(
             ambiente=ambiente,
         )
 
-        executar_git(
-            [
-                "add",
-                "-A",
-                "--",
-                publicacao_relativa,
-            ],
-            cwd=clone,
-            ambiente=ambiente,
-        )
+        # Sem árvore publicada, o pathspec do git add falharia (código 128).
+        if destino_clone.exists():
+            executar_git(
+                [
+                    "add",
+                    "-A",
+                    "--",
+                    publicacao_relativa,
+                ],
+                cwd=clone,
+                ambiente=ambiente,
+            )
 
         diferenca = executar_git(
             ["diff", "--cached", "--quiet"],
