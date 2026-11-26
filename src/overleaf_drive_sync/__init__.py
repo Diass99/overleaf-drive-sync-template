@@ -1,3 +1,3 @@
 """Automação portátil entre Google Drive e Overleaf."""
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"

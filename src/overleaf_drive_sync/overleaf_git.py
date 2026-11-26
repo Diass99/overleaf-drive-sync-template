@@ -200,6 +200,21 @@ def executar_fluxo_completo(
         )
     )
 
+    # Outputs no próprio projeto: a pasta de outputs do Drive é a mesma
+    # pasta publicada no Overleaf (ex.: 06_OUTPUTS nos dois lados).
+    # Não há cópia intermediária, e o que volta do Overleaf nessa pasta
+    # nunca sobrescreve os produtos gerados pelos códigos.
+    mesma_pasta = destino_outputs == origem_outputs
+
+    if mesma_pasta:
+        if origem_publicacao != destino_outputs:
+            raise ValueError(
+                "Com destino_outputs igual à pasta de outputs, "
+                "publicacao.origem deve ser a mesma pasta."
+            )
+
+        exclusoes.add(Path(publicacao_relativa).parts[0])
+
     if repo_url is None:
         if not project_id:
             raise ValueError(
@@ -246,18 +261,27 @@ def executar_fluxo_completo(
         )
 
         # Outputs são a fonte oficial dos produtos gerados.
-        copia_outputs = copiar_arvore_integral(
-            origem_outputs,
-            destino_outputs,
-            simular=simular,
-            recursivo=recursivo,
-        )
-        imprimir_operacoes(
-            "Outputs → pasta raiz",
-            copia_outputs,
-        )
+        if mesma_pasta:
+            copia_outputs = ResultadoCopia()
+            print(
+                "\nOutputs → pasta raiz\n"
+                "  Dispensado: a pasta de outputs já é a pasta publicada."
+            )
+        else:
+            copia_outputs = copiar_arvore_integral(
+                origem_outputs,
+                destino_outputs,
+                simular=simular,
+                recursivo=recursivo,
+            )
+            imprimir_operacoes(
+                "Outputs → pasta raiz",
+                copia_outputs,
+            )
 
-        if simular:
+        if mesma_pasta:
+            fonte_publicacao = origem_outputs
+        elif simular:
             # Monta em área temporária o estado que seria publicado.
             sombra = temporario / "publicacao_sombra"
             sombra.mkdir()
@@ -289,6 +313,7 @@ def executar_fluxo_completo(
             publicacao = copiar_arvore_integral(
                 fonte_publicacao,
                 destino_clone,
+                recursivo=recursivo if mesma_pasta else True,
             )
         else:
             publicacao = ResultadoCopia()

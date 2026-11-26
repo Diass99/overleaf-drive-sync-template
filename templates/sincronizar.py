@@ -112,6 +112,13 @@ def main() -> int:
                 "sincronizacao.destino_outputs",
             )
 
+            if destino == origem_outputs.expanduser().resolve():
+                print(
+                    "Outputs → pasta raiz: dispensado "
+                    "(a pasta de outputs já é a pasta publicada)."
+                )
+                return 0
+
             resultado = copiar_arvore_integral(
                 origem_outputs,
                 destino,
