@@ -180,3 +180,7 @@ do Git Credential Manager, defina também:
 MIT License.
 
 Copyright © 2026 Vinícius José Dias.
+
+## Relatório técnico
+
+Arquitetura, decisões, histórico de versões e tutorial: [docs/RELATORIO_TECNICO.md](docs/RELATORIO_TECNICO.md).
