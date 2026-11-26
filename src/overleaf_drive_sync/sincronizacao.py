@@ -104,13 +104,21 @@ def copiar_arvore_integral(
     *,
     simular: bool = False,
     excluir: set[str] | None = None,
+    recursivo: bool = True,
 ) -> ResultadoCopia:
     origem, destino = validar_arvores(origem, destino)
     excluir = set(excluir or ())
     resultado = ResultadoCopia()
 
+    # recursivo=False: somente os arquivos do primeiro nível da origem;
+    # subpastas (caches, backups) não são copiadas.
+    candidatos = (
+        origem.rglob("*")
+        if recursivo
+        else (item for item in origem.iterdir() if not item.is_dir())
+    )
     itens = sorted(
-        origem.rglob("*"),
+        candidatos,
         key=lambda item: item.relative_to(origem).as_posix(),
     )
 

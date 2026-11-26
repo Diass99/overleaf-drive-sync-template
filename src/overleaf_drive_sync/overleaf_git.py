@@ -193,6 +193,13 @@ def executar_fluxo_completo(
     )
     exclusoes.add(".git")
 
+    recursivo = bool(
+        configuracao.get("sincronizacao", {}).get(
+            "recursivo",
+            True,
+        )
+    )
+
     if repo_url is None:
         if not project_id:
             raise ValueError(
@@ -243,6 +250,7 @@ def executar_fluxo_completo(
             origem_outputs,
             destino_outputs,
             simular=simular,
+            recursivo=recursivo,
         )
         imprimir_operacoes(
             "Outputs → pasta raiz",
@@ -263,6 +271,7 @@ def executar_fluxo_completo(
             copiar_arvore_integral(
                 origem_outputs,
                 sombra,
+                recursivo=recursivo,
             )
 
             fonte_publicacao = sombra

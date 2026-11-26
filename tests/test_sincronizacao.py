@@ -180,6 +180,34 @@ class TestSincronizacao(unittest.TestCase):
             )
             self.assertFalse((destino / ".DS_Store").exists())
 
+    def test_nao_recursivo_copia_somente_primeiro_nivel(self):
+        temporario, origem, destino = self.criar_arvores()
+
+        with temporario:
+            (origem / "01_figura.png").write_bytes(b"png")
+            (origem / "99_OPERACIONAL").mkdir()
+            (origem / "99_OPERACIONAL" / "cache.nc").write_bytes(b"nc")
+            (origem / "00_BACKUP").mkdir()
+            (origem / "00_BACKUP" / "antiga.png").write_bytes(b"old")
+
+            resultado = copiar_arvore_integral(
+                origem,
+                destino,
+                recursivo=False,
+            )
+
+            self.assertEqual(resultado.novos, 1)
+            self.assertTrue((destino / "01_figura.png").is_file())
+            self.assertFalse((destino / "99_OPERACIONAL").exists())
+            self.assertFalse((destino / "00_BACKUP").exists())
+
+            segunda = copiar_arvore_integral(
+                origem,
+                destino,
+                recursivo=False,
+            )
+            self.assertEqual(segunda.alteracoes, 0)
+
     def test_rejeita_destino_dentro_da_origem(self):
         with tempfile.TemporaryDirectory() as temporario:
             origem = Path(temporario) / "origem"

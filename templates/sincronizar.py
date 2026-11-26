@@ -116,6 +116,12 @@ def main() -> int:
                 origem_outputs,
                 destino,
                 simular=argumentos.simular,
+                recursivo=bool(
+                    config.get("sincronizacao", {}).get(
+                        "recursivo",
+                        True,
+                    )
+                ),
             )
             imprimir_operacoes(
                 "Outputs → pasta raiz",
